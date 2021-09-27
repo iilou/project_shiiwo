@@ -6,7 +6,7 @@ class World():
         self.objects = []
         self.display_size = display_size
 
-        self.camera = Camera([0, 0, -500], 80, [0,0,0], display_size)
+        self.camera = Camera([0, 0, -1500], 70, [0,0,0], display_size)
 
     def addObject(self, dim, type):
         self.objects.append(Object(dim, type))
@@ -22,21 +22,26 @@ class World():
             for face in self.objects[i].data:
                 raw_position_list = self.camera.projection(face)
                 conv_position_list = []
-                print(str(raw_position_list))
+                #print(str(raw_position_list))
 
                 screen_size = [length_3(vec_subtract(self.camera.screen_corners[0], self.camera.screen_corners[1])), length_3(vec_subtract(self.camera.screen_corners[0], self.camera.screen_corners[2]))]
                 #print(str(screen_size))
 
-
                 for raw_position in raw_position_list:
-                    
-                    d_h = length_3(vec_cross(vec_subtract(raw_position, self.camera.screen_corners[1]), vec_subtract(self.camera.screen_corners[1], self.camera.screen_corners[0]))) / length_3(vec_subtract(raw_position, self.camera.screen_corners[1]))
-                    d_v = length_3(vec_cross(vec_subtract(raw_position, self.camera.screen_corners[2]), vec_subtract(self.camera.screen_corners[2], self.camera.screen_corners[0]))) / length_3(vec_subtract(raw_position, self.camera.screen_corners[2]))
-
+                    #print(raw_position)
+                    #print(str(self.camera.screen_corners))
+                    d_h = length_3(vec_cross(vec_subtract(raw_position, self.camera.screen_corners[1]), vec_subtract(raw_position, self.camera.screen_corners[0]))) / length_3(vec_subtract(self.camera.screen_corners[0], self.camera.screen_corners[1]))
+                    d_v = length_3(vec_cross(vec_subtract(raw_position, self.camera.screen_corners[2]), vec_subtract(raw_position, self.camera.screen_corners[0]))) / length_3(vec_subtract(self.camera.screen_corners[0], self.camera.screen_corners[2]))
+                    #print(d_h, d_v)
                     x_pos = (d_h / screen_size[0]) * self.display_size[0]
                     y_pos = (d_v / screen_size[1]) * self.display_size[1]
 
-                    conv_position_list.append([raw_position[0], raw_position[1]])
+
+                    conv_position_list.append([d_h, d_v])
+                # print(face)
+                # print(raw_position_list)
+                # print(conv_position_list)
+                # print("")
 
                 polygons.append(conv_position_list)
 
