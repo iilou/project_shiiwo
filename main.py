@@ -59,30 +59,31 @@ draw()
 clock = pygame.time.Clock()
 cam_speed = 3
 while True:
-    dt = clock.tick(60)
-    movement = [0,0,0]
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_a:
-                movement[0] -= cam_speed * dt
-            if event.key == pygame.K_d:
-                movement[0] += cam_speed * dt
-            if event.key == pygame.K_w:
-                movement[2] += cam_speed * dt
-            if event.key == pygame.K_s:
-                movement[2] -= cam_speed * dt
-            if event.key == pygame.K_SPACE:
-                movement[1] += cam_speed * dt
-            if event.key == pygame.K_LSHIFT:
-                movement[1] -= cam_speed * dt
+    dt = clock.tick(60)
+    movement = [0,0,0]
+    input_keys = pygame.key.get_pressed()
+
+    if input_keys[pygame.K_a]:
+        movement[0] -= cam_speed * dt
+    if input_keys[pygame.K_d]:
+        movement[0] += cam_speed * dt
+    if input_keys[pygame.K_w]:
+        movement[1] += cam_speed * dt
+    if input_keys[pygame.K_s]:
+        movement[1] -= cam_speed * dt
+    if input_keys[pygame.K_SPACE]:
+        movement[2] += cam_speed * dt
+    if input_keys[pygame.K_LSHIFT]:
+        movement[2] -= cam_speed * dt
 
     round(movement[0], 3)
     round(movement[1], 3)
+    round(movement[2], 3)
 
     if not movement == [0,0,0]:
         shiiwo.camera.pos[0] += movement[0]
