@@ -1,5 +1,6 @@
 import pygame 
 import sys
+from graph import *
 from helpers import toVector2
 from world import World
 
@@ -16,23 +17,24 @@ uwu.fill(white)
 
 shiiwo = World(display_size)
 
-cube_dimensions_1 = [[200,200,0], 
-                    [400,0,-200],    
-                    [400,-200,-200],   
-                    [200,0,0],   
-                    [400,400,-200],   
-                    [600,200,0],  
-                    [600,0,0],   
-                    [400,200,-200]]
-cube_dimensions_2 = [[-200,200,200], 
-                    [200,200,200],    
-                    [200,-200,200],   
-                    [-200,-200,200],   
-                    [-200,200,-200],   
-                    [200,200,-200],  
-                    [200,-200,-200],   
-                    [-200,-200,-200]]
+cube_dimensions_1 = [Point_3(400,200,200), 
+                    Point_3(800,200,200),    
+                    Point_3(800,-200,200),   
+                    Point_3(400,-200,200),   
+                    Point_3(400,200,-200),   
+                    Point_3(800,200,-200),  
+                    Point_3(800,-200,-200),   
+                    Point_3(400,-200,-200)]
+cube_dimensions_2 = [Point_3(-200,200,200), 
+                    Point_3(200,200,200),    
+                    Point_3(200,-200,200),   
+                    Point_3(-200,-200,200),   
+                    Point_3(-200,200,-200),   
+                    Point_3(200,200,-200),  
+                    Point_3(200,-200,-200),   
+                    Point_3(-200,-200,-200)]
 
+shiiwo.addObject(cube_dimensions_1, "square")
 shiiwo.addObject(cube_dimensions_2, "square")
 
 #print(round([0.013, 0.147], 2))

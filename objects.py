@@ -33,14 +33,6 @@ class Camera():
         self.fov = fov
         self.rot = rot
         self.dim = dim
-        
-        self.point_screen = []
-        self.point_focus = []
-        self.screen_dimensions = dim
-
-        self.screen_corners = [[],[],[],[]]
-        self.screen_vec = []
-        self.screen_plane = []
 
     def projection(self, face):
         polygon = []
@@ -48,12 +40,10 @@ class Camera():
         #print(face)
 
         for point in face:
-            d_vec = [self.point_focus[0] - point[0], self.point_focus[1] - point[1], self.point_focus[2] - point[2]]
+            point_to_focus_eq = linearequation_make(point, self.point_focus)
+            point_to_focus_int = self.screen_plane.intersect_linearequation(point_to_focus_eq)
 
-            polygon.append(vec_intersect_plane(self.screen_plane, d_vec, point))
-
-            #print(str(d_vec))
-            #print(t_val)
+            polygon.append(point_to_focus_int)
 
         return polygon
 
@@ -64,20 +54,21 @@ class Camera():
         wd = self.screen_dimensions[0]/2
         hd = self.screen_dimensions[1]/2
 
-        self.screen_corners[0] = [self.point_screen[0] - wd, self.point_screen[1] + hd, self.point_screen[2]]
-        self.screen_corners[1] = [self.point_screen[0] - wd, self.point_screen[1] - hd, self.point_screen[2]]
-        self.screen_corners[2] = [self.point_screen[0] + wd, self.point_screen[1] + hd, self.point_screen[2]]
-        self.screen_corners[3] = [self.point_screen[0] + wd, self.point_screen[1] - hd, self.point_screen[2]]
-
         delta_z = wd * math.tan(math.radians(self.fov/2))
 
+        self.corner_topleft = self.point_screen
+        self.corner_topleft.x -= wd
+        self.corner_topleft.y += hd
+
+        self.h_screen_eq = linearequation_make_vec(vec_make_raw(1, 0, 0), self.corner_topleft)
+        self.v_screen_eq = linearequation_make_vec(vec_make_raw(0, -1, 0), self.corner_topleft)
         #print(delta_z)
 
-        self.point_focus = [self.point_screen[0], self.point_screen[1], self.point_screen[2] - delta_z]
-        self.screen_vec = vec_make(self.point_screen, self.point_focus)
+        self.point_focus = self.point_screen
+        self.point_focus.z -= delta_z
+        self.screen_vec = vec_make_points(self.point_screen, self.point_focus)
 
-        self.screen_plane = self.screen_vec
-        self.screen_plane.append(self.point_screen[0] * self.screen_vec[0] + self.point_screen[1] * self.screen_vec[1] + self.point_screen[2] * self.screen_vec[2])
+        self.screen_plane = plane_make_vecnpoint(self.screen_vec, self.point_screen)
         
         print(str(self.screen_vec))
         print(str(self.point_focus))
