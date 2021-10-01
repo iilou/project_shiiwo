@@ -1,7 +1,7 @@
 import pygame 
 import sys
 from graph import *
-from helpers import toVector2
+from helpers import delta_2d_pos, toVector2
 from world import World
 
 pygame.init()
@@ -40,9 +40,8 @@ shiiwo.addObject(cube_dimensions_2, "square")
 #print(round([0.013, 0.147], 2))
 #print(str(shiiwo.objects[0].data))
 
-def draw():
+def draw(poly_list):
     uwu.fill(white)
-    poly_list = shiiwo.getImage()
     #print(str(poly_list))
     for poly in poly_list:
         pygame.draw.polygon(uwu, grey_dark_1, poly)
@@ -55,11 +54,11 @@ def draw():
     #pygame.draw.polygon(uwu, black, [(300, 300),(300,-300),(-300,-300),(-300,300)])
 
     pygame.display.flip()
-
-draw()
-
+draw(shiiwo.getImage())
 clock = pygame.time.Clock()
 cam_speed = 3
+rot_speed = 0.0001
+mouse_position = pygame.mouse.get_pos()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -68,6 +67,7 @@ while True:
 
     dt = clock.tick(60)
     movement = [0,0,0]
+    rotation = [0,0]
     input_keys = pygame.key.get_pressed()
 
     if input_keys[pygame.K_a]:
@@ -78,20 +78,22 @@ while True:
         movement[1] += cam_speed * dt
     if input_keys[pygame.K_s]:
         movement[1] -= cam_speed * dt
-    if input_keys[pygame.K_SPACE]:
-        movement[2] += cam_speed * dt
+    if input_keys[pygame.K_q]:
+        movement[2] += cam_speed * dt  / 2
+    if input_keys[pygame.K_e]:
+        movement[2] -= cam_speed * dt  / 2
+
     if input_keys[pygame.K_LSHIFT]:
-        movement[2] -= cam_speed * dt
+        cur_mouse_position = pygame.mouse.get_pos()
+        delta_mouse_pos = delta_2d_pos(mouse_position, cur_mouse_position)
+        mouse_position = cur_mouse_position
 
-    round(movement[0], 3)
-    round(movement[1], 3)
-    round(movement[2], 3)
+        rotation[0] = delta_mouse_pos[0] * rot_speed
+        rotation[1] = delta_mouse_pos[1] * rot_speed
 
-    if not movement == [0,0,0]:
-        shiiwo.camera.pos[0] += movement[0]
-        shiiwo.camera.pos[1] += movement[1]
-        shiiwo.camera.pos[2] += movement[2]
-        draw()
+    
+    shiiwo.update(movement, rotation)
+    draw(shiiwo.getImage())
 
 
         
